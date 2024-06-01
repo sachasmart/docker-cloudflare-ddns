@@ -4,6 +4,7 @@
 . /config/cloudflare.conf
 
 DnsIpAddress=$(getDnsRecordIp $CF_ZONE_ID $CF_RECORD_ID)
+DiscordWebhookUrl=$DISCORD_WEBHOOK_URL
 
 if [ ! -z ${CUSTOM_LOOKUP_CMD+x} ]; then
   CurrentIpAddress=$(getCustomIpAddress)
@@ -21,6 +22,13 @@ if [ "$CurrentIpAddress" != "$DnsIpAddress" ]; then
     echo "ERROR: Failed to update CloudFlare DNS record $CF_RECORD_NAME from $DnsIpAddress to $CurrentIpAddress"
   else
     echo "CloudFlare DNS record $CF_RECORD_NAME ($CurrentIpAddress) updated successfully."
+
+    if [ ! -z ${DISCORD_WEBHOOK_URL+x} ]; then
+      curl -H "Content-Type: application/json" \
+           -X POST \
+           -d "{\"content\":\"CloudFlare DNS record $CF_RECORD_NAME ($CurrentIpAddress) updated successfully.\"}" \
+           $DISCORD_WEBHOOK_URL
+    fi
   fi
   
 else

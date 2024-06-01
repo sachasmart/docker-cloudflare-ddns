@@ -46,7 +46,7 @@ getPublicIpAddress() {
     CLOUD_FLARE_IP_LEN=${#CLOUD_FLARE_IP}
 
     # if using cloud flare fails, try opendns (some ISPs block 1.1.1.1)
-    IP_ADDRESS=$([ $CLOUD_FLARE_IP_LEN -gt 15 ] && echo $(dig +short myip.opendns.com @resolver1.opendns.com +time=3) || echo "$CLOUD_FLARE_IP")
+    IP_ADDRESS=$(curl -sf4 https://ipinfo.io | jq -r '.ip' || echo "$CLOUD_FLARE_IP")
 
     # if dns method fails, use http method
     if [ "$IP_ADDRESS" = "" ]; then
