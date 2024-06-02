@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: kaniko
+spec:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: kubernetes.io/arch
+                operator: In
+                values:
+                  - amd64 ## Ensure that Raspberrypi's don't get selected
+  containers:
+    - name: kubectl
+      image: joshendriks/alpine-k8s
+      command:
+        - /bin/cat
+      tty: true
+    - name: kaniko
+      image: gcr.io/kaniko-project/executor:debug
+      command:
+        - /busybox/cat
+      tty: true
+      volumeMounts:
+        - name: kaniko-secret-homelab
+          mountPath: /kaniko/.docker
+  volumes:
+    - name: kaniko-secret-homelab
+      secret:
+        namespace: jenkins
+        secretName: docker-image-push-image-secret
+        items:
+          - key: .dockerconfigjson
+            path: config.json
