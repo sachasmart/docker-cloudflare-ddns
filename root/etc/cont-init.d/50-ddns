@@ -25,13 +25,13 @@ if [ "$CurrentIpAddress" != "$DnsIpAddress" ]; then
   else
     echo "$now | CloudFlare DNS record $CF_RECORD_NAME ($CurrentIpAddress) updated successfully."
 
-    if [ -n "$DISCORD_WEBHOOK_URL" ]; then
-      echo "$now | Sending Discord notification..."
-      curl -H "Content-Type: application/json" \
-           -X POST \
-           -d "{\"content\":\"CloudFlare DNS record $CF_RECORD_NAME ($CurrentIpAddress) updated successfully.\"}" \
-           "$DISCORD_WEBHOOK_URL"
-    fi
+    # if [ -n "$DISCORD_WEBHOOK_URL" ]; then
+    #   echo "$now | Sending Discord notification..."
+    #   curl -H "Content-Type: application/json" \
+    #        -X POST \
+    #        -d "{\"content\":\"CloudFlare DNS record $CF_RECORD_NAME ($CurrentIpAddress) updated successfully.\"}" \
+    #        "$DISCORD_WEBHOOK_URL"
+    # fi
   fi
   
 else
