@@ -19,19 +19,20 @@ now=$(date)
 if [ "$CurrentIpAddress" != "$DnsIpAddress" ]; then
   echo "$now | Updating CloudFlare DNS record $CF_RECORD_NAME from $DnsIpAddress to $CurrentIpAddress..."
   update=$(updateDnsRecord "$CF_ZONE_ID" "$CF_RECORD_ID" "$CF_RECORD_NAME" "$CurrentIpAddress")
+  echo "update = $update"
 
   if [ "$update" == "null" ]; then
     echo "$now | ERROR: Failed to update CloudFlare DNS record $CF_RECORD_NAME from $DnsIpAddress to $CurrentIpAddress"
   else
     echo "$now | CloudFlare DNS record $CF_RECORD_NAME ($CurrentIpAddress) updated successfully."
 
-    # if [ -n "$DISCORD_WEBHOOK_URL" ]; then
-    #   echo "$now | Sending Discord notification..."
-    #   curl -H "Content-Type: application/json" \
-    #        -X POST \
-    #        -d "{\"content\":\"CloudFlare DNS record $CF_RECORD_NAME ($CurrentIpAddress) updated successfully.\"}" \
-    #        "$DISCORD_WEBHOOK_URL"
-    # fi
+    if [ -n "$DISCORD_WEBHOOK_URL" ]; then
+      echo "$now | Sending Discord notification..."
+      curl -H "Content-Type: application/json" \
+           -X POST \
+           -d "{\"content\":\"CloudFlare DNS record $CF_RECORD_NAME ($CurrentIpAddress) updated successfully.\"}" \
+           "$DISCORD_WEBHOOK_URL"
+    fi
   fi
   
 else

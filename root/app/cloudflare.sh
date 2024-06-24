@@ -104,8 +104,14 @@ updateDnsRecord() {
     PROXIED="false"
   fi
 
-  cloudflare -X PATCH -d "{\"type\": \"$RRTYPE\",\"name\":\"$3\",\"content\":\"$4\",\"proxied\":$PROXIED }" "$CF_API/zones/$1/dns_records/$2" | jq -r '.result.id'
+  response=$(cloudflare -X PATCH -d "{\"type\": \"$RRTYPE\",\"name\":\"$3\",\"content\":\"$4\",\"proxied\":$PROXIED }" "$CF_API/zones/$1/dns_records/$2")
+
+  echo "$response" 
+  result_id=$(echo "$response" | jq -r '.result.id') 
+  echo "$result_id" 
+  return "$result_id"
 }
+
 
 deleteDnsRecord() {
   cloudflare -X DELETE "$CF_API/zones/$1/dns_records/$2" | jq -r '.result.id'
